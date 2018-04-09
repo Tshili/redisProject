@@ -28,7 +28,11 @@ public class RedisConfig {
 		public RedisTemplate<String, String> stringRedisTemplate() {
 		   RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 		   redisTemplate.setConnectionFactory(jedisConnectionFactory());
+		   redisTemplate.setKeySerializer(new StringRedisSerializer());
+		   redisTemplate.setValueSerializer(new StringRedisSerializer());
 		   redisTemplate.setDefaultSerializer(new StringRedisSerializer());
+		   redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+		   redisTemplate.setHashValueSerializer(new StringRedisSerializer());
 		   return redisTemplate;
 		}
 		
