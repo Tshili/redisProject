@@ -1,15 +1,28 @@
 package com.bia.repository;
 
+import java.util.List;
+
+import com.bia.redis.model.Tweet;
 import com.bia.redis.model.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface UserRepository {
 	
-	void addUser(User user) throws JsonProcessingException;
+	// USER
 	
-	//User findbyId(String id);
+	void signUp (User user );
+		
+	String signIn(String login, String pwd );
 	
-	Boolean alreadyExist (String name);
+	boolean isExist(String login);
 	
+	String getLogin(String login);
+	
+	
+	
+	
+	
+	
+	
+
 
 }

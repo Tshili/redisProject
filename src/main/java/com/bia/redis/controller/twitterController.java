@@ -1,7 +1,9 @@
 package com.bia.redis.controller;
 
+import java.util.List;
 import java.util.UUID;
 
+import javax.ws.rs.Produces;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
@@ -19,8 +21,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bia.redis.model.Tweet;
 import com.bia.redis.model.User;
-import com.bia.repository.UserRepository;
+import com.bia.repository.TwitterRepositoryImpl;
+import com.bia.repository.UserRepositoryImpl;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,72 +34,181 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class twitterController {
 	
 	
-	
-	
-@Autowired
-private RedisTemplate<String , String >redisTemplate;
 
 @Autowired
-private ObjectMapper objectMapper;
+private UserRepositoryImpl userRepositoryImpl;
 
-private UserRepository UserRepository;
-
-
-private ValueOperations <String, String> valueOperations;
+@Autowired
+private TwitterRepositoryImpl twitterRepositoryImpl;
 
 
+/* -------------------------------- Connection  ---------------------------------------------------*/
 
-private HashOperations hashOperations;
+@RequestMapping(value="/signIn"   , method = RequestMethod.POST)
+public String signIn (@RequestParam("name") String login, @RequestParam("pass") String pass, Model model ) throws JsonProcessingException {
+	
+		if (login != null && pass != null) {
+			userRepositoryImpl.signIn(login, pass);	
+			return " Le user " + login + "s'est logué";
+		}else {
+			
+			model.addAttribute("Mot de passe ou login non renseigné ", Boolean.TRUE);
+			return " pwd ou login pas renseigné";
+		}
+			
+}
 
 
 
-// Inscription d'un utilisateur 
 @RequestMapping(value="/signUp"   , method = RequestMethod.POST)
-public String signUp (@RequestParam("name") String name, @RequestParam("pass") String pass, @RequestParam("confirmationMdp") String confirmationMdp, Model model ) throws JsonProcessingException {
+public String signUp (@RequestParam("name") String login, @RequestParam("pass") String pass, @RequestParam("confirmationMdp") String confirmationMdp, Model model ) throws JsonProcessingException {
 	
-			User user = new User();
-				user.setName(name);
-					user.setPass(pass);
+	User user = new User();
+	user.setLogin(login);
+	user.setPass(pass);
+		
+	if (!pass.equals(confirmationMdp)) {
+		model.addAttribute("Mot de passe ne sont pas identique ", Boolean.TRUE);
+		return "mot de passe pas identique, enregistrement impossible ";
+	}	
+	
+	
+	if (!userRepositoryImpl.isExist(login)) {
 					
-					if (!pass.equals(confirmationMdp)) {
-						model.addAttribute("Mot de passe ne sont pas identique ", Boolean.TRUE);
-						return "mot de passe pas identique, enregistrement impossible ";
-					}else {
-						
-						String uid = String.valueOf(UUID.randomUUID());
-						 hashOperations = redisTemplate.opsForHash();
-						
-						 hashOperations.put("USER", uid, objectMapper.writeValueAsString(user));
-						 
-						 return " Save complete !!!";
-						
-					}
+			System.out.println("---- le user exsite pas on peut l'enregistrer");
+			userRepositoryImpl.signUp(user);
+		}
+		
+			
+	return " Save complete !!!";
+			
 		
 }
 
 
 
-// Connection
-@RequestMapping(value="/signIn"   , method = RequestMethod.POST)
-public String signIn(  @RequestParam("name") String name, @RequestParam("pass") String pass, Model model ) throws JsonProcessingException {
+
+/* -------------------------------- Tweet  ---------------------------------------------------*/
+
+
+
+
+@RequestMapping(value="/newTweet"   , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+public String newTweet (@RequestParam("login") String login, @RequestParam("content") String content) throws JsonProcessingException {
 	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
 	
-	System.out.println("------    le name  --------");
-	System.out.println(name);
+	Tweet tweet = new Tweet();
+	tweet.setContent(content);
 	
+	return twitterRepositoryImpl.newTweets(user, tweet);
 	
-	
-	 valueOperations = redisTemplate.opsForValue();
-	String  myName = valueOperations.get(name);
-	
-	
-	System.out.println("------    le myName --------");
-	System.out.println(valueOperations);
-	System.out.println(myName);
-	
-	return null;
-	
+				
 }
+
+
+@RequestMapping(value="/showTweets"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public List<String> newTweet (@RequestParam("login") String login )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	return twitterRepositoryImpl.ShowAllTweetOfUser(user);
+	
+				
+}
+
+
+@RequestMapping(value="/numberOfTweet"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public  Long  numberOfTweet (@RequestParam("login") String login )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	
+	return twitterRepositoryImpl.numberOfTweet(user);
+					
+}
+
+
+
+
+/* -------------------------------- Follow  ---------------------------------------------------*/
+
+@RequestMapping(value="/addFollower"   , method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
+public void addFollower (@RequestParam("login") String login, @RequestParam("follower") String follower )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	
+	twitterRepositoryImpl.addFollower(user, follower );
+					
+}
+
+
+@RequestMapping(value="/addFollowing"   , method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
+public void addFollowing (@RequestParam("login") String login, @RequestParam("idFollower") String follow )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	
+	twitterRepositoryImpl.addFollowing(user, follow );
+					
+}
+
+
+@RequestMapping(value="/showAllMyFollwer"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public List<String> showAllMyFollwer (@RequestParam("login") String login )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	
+	return twitterRepositoryImpl.showAllMyFollwer(user);
+					
+}
+
+@RequestMapping(value="/showAllPeopleFollowBy"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public  List<String>  showAllPeopleFollowBy (@RequestParam("login") String login )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	
+	return twitterRepositoryImpl.showAllPeopleFollowBy(user);
+					
+}
+
+@RequestMapping(value="/numberOfFollowers"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public  Long  numberOfFollowers (@RequestParam("login") String login )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	
+	return twitterRepositoryImpl.numberOfFollowers(user);
+					
+}
+
+@RequestMapping(value="/numberOfPeopleIFollow"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public  Long  numberOfPeopleIFollow (@RequestParam("login") String login )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	
+	return twitterRepositoryImpl.numberOfPeopleIFollow(user);
+					
+}
+
+
+
+
+
 
 
 
