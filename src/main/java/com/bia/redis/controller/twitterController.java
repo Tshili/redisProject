@@ -1,24 +1,17 @@
 package com.bia.redis.controller;
 
 import java.util.List;
-import java.util.UUID;
 
-import javax.ws.rs.Produces;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bia.redis.model.Tweet;
@@ -27,7 +20,7 @@ import com.bia.repository.TwitterRepositoryImpl;
 import com.bia.repository.UserRepositoryImpl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 
 
@@ -96,14 +89,16 @@ public String signUp (@RequestParam("name") String login, @RequestParam("pass") 
 
 
 @RequestMapping(value="/newTweet"   , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-public String newTweet (@RequestParam("login") String login, @RequestParam("content") String content) throws JsonProcessingException {
+
+//public String newTweet (@RequestParam("login") String login, @RequestParam("content") String content) throws JsonProcessingException {
+	public String newTweet (@RequestBody User user, Tweet tweet )throws JsonProcessingException {
 	
-	User user = new User();
-	user.setLogin(login);
-	user.setPass("");
+	//User user = new User();
+	//user.setLogin(login);
+	//user.setPass("");
 	
-	Tweet tweet = new Tweet();
-	tweet.setContent(content);
+	//Tweet tweet = new Tweet();
+	//tweet.setContent(content);
 	
 	return twitterRepositoryImpl.newTweets(user, tweet);
 	
@@ -114,6 +109,7 @@ public String newTweet (@RequestParam("login") String login, @RequestParam("cont
 @RequestMapping(value="/showTweets"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
 public List<String> newTweet (@RequestParam("login") String login )throws JsonProcessingException {
 	
+	
 	User user = new User();
 	user.setLogin(login);
 	user.setPass("");
@@ -121,6 +117,21 @@ public List<String> newTweet (@RequestParam("login") String login )throws JsonPr
 	
 				
 }
+
+
+/*@RequestMapping(value="/showTweets/{login}"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public List<String> newTweet (@PathVariable String login )throws JsonProcessingException {
+	
+	
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	return twitterRepositoryImpl.ShowAllTweetOfUser(user);
+	
+				
+}*/
+
+
 
 
 @RequestMapping(value="/numberOfTweet"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
@@ -220,6 +231,7 @@ public  Long  numberOfPeopleIFollow (@RequestParam("login") String login )throws
 }
 
 @RequestMapping(value="/search"   , method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
+
 public  List<String>  search (@RequestParam("hashtag") String hashtag )throws JsonProcessingException {
 	
 	Tweet query = new Tweet();
