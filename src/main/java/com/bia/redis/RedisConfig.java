@@ -8,6 +8,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 import redis.clients.jedis.Jedis;
 
 @Configuration
@@ -21,6 +22,6 @@ public class RedisConfig {
 	public static Jedis getJedis() {
 		return new Jedis("localhost");
 	}
+	
 
-    
 }

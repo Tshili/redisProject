@@ -9,6 +9,7 @@ import com.bia.redis.RedisConfig;
 import com.bia.redis.model.Tweet;
 import com.bia.redis.model.User;
 
+
 import redis.clients.jedis.Jedis;
 
 @Repository
@@ -26,6 +27,7 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 		
 		jedis.lpush(user.getLogin()+"Tweet:", tweet.getContent());
 		jedis.lpush("ShowTweetOf:"+user.getLogin() , tweet.getContent());
+		jedis.lpush("AllTweet:", tweet.getContent());
 		
 		List<String> AllFollowers = new ArrayList<>();
 		
@@ -34,13 +36,36 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 		AllFollowers = jedis.lrange(key, 0, -1);
 		
 		for (String follower : AllFollowers) {
-			jedis.lpush("ShowTweetToFollower:"+ follower , tweet.getContent());
+			jedis.lpush("ShowTweetToFollower:"+follower , tweet.getContent());
 		}
 		
 		return null;
 	}
 	
-	
+	@Override
+	public List<String> showTweetOfPeopleIFollow(User user) {
+		
+		
+		List<String> tweetOfPeolpleIfollw = new ArrayList<>();
+				
+		List<String> getTWeetOfPeopleIfoolow = new ArrayList<>();
+			
+		for (String people : showAllPeopleFollowBy(user)) {
+			
+			tweetOfPeolpleIfollw = RedisConfig.getJedis().lrange("ShowTweetOf:"+people, 0, -1);
+			
+			for (String tweet : tweetOfPeolpleIfollw) {
+				getTWeetOfPeopleIfoolow.add( people + " a tweeté : " +  tweet);
+				
+			}					
+		}
+		
+		System.out.println("Show all tweet of user" );
+		
+				System.out.println(getTWeetOfPeopleIfoolow);
+		
+		return getTWeetOfPeopleIfoolow;
+	}
 	
 	@Override
 	public long numberOfTweet(User user) {
@@ -144,6 +169,48 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 				
 		return	jedis.llen(key);
 	}
+
+
+	
+	
+	/* ----------------------------- Search  -----------------------------------*/
+
+	@Override
+	public List <String> search(Tweet tweet) {
+			
+		Jedis jedis = RedisConfig.getJedis();
+		
+		String key = "AllTweet:" ;
+		
+		List <String> allTweet = new ArrayList<>();
+		
+		List<String> getTweetsbyHashtag =  new ArrayList<>();
+		
+		allTweet = jedis.lrange(key, 0, -1);
+		
+		System.out.println("all tweets ");
+		
+		System.out.println(allTweet);
+				
+		for (String  Thetweet  : allTweet) {
+				
+			if (Thetweet.contains(tweet.getContent())) {
+				getTweetsbyHashtag.add(Thetweet);
+				
+				System.out.println("all tweets that contains an hashtag");
+				
+				System.out.println(getTweetsbyHashtag);
+				
+			} 		
+		}
+		return getTweetsbyHashtag;
+		
+		
+	}
+
+
+
+	
 
 
 

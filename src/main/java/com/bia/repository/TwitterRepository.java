@@ -5,6 +5,8 @@ import java.util.List;
 import com.bia.redis.model.Tweet;
 import com.bia.redis.model.User;
 
+
+
 public interface TwitterRepository {
 	
 	
@@ -23,6 +25,13 @@ public interface TwitterRepository {
 	 long numberOfFollowers(User user);
 	 long numberOfPeopleIFollow(User user);
 	 long numberOfTweet(User user);
+	 List<String> showTweetOfPeopleIFollow(User user);
+	 
+	 
+	 /* ------------------ Search  ---------------*/
+	 
+	 List <String> search(Tweet tweet);
+	 
 	 
 
 }

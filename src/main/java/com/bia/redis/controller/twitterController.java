@@ -29,6 +29,8 @@ import com.bia.repository.UserRepositoryImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
+
 @RestController
 @RequestMapping("/twitter")
 public class twitterController {
@@ -133,6 +135,18 @@ public  Long  numberOfTweet (@RequestParam("login") String login )throws JsonPro
 }
 
 
+@RequestMapping(value="/showAllTweetofFollowing"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public  List<String>  showAllTweetofFollowing (@RequestParam("user") String u )throws JsonProcessingException {
+	
+	User user = new User();
+	user.setLogin(u);
+	
+	
+	return twitterRepositoryImpl.showTweetOfPeopleIFollow(user);
+					
+}
+
+
 
 
 /* -------------------------------- Follow  ---------------------------------------------------*/
@@ -204,6 +218,20 @@ public  Long  numberOfPeopleIFollow (@RequestParam("login") String login )throws
 	return twitterRepositoryImpl.numberOfPeopleIFollow(user);
 					
 }
+
+@RequestMapping(value="/search"   , method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
+public  List<String>  search (@RequestParam("hashtag") String hashtag )throws JsonProcessingException {
+	
+	Tweet query = new Tweet();
+	query.setContent(hashtag);;
+	query.getTime();
+	
+	return twitterRepositoryImpl.search(query);
+					
+}
+
+
+
 
 
 
