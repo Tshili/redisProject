@@ -90,15 +90,15 @@ public String signUp (@RequestParam("name") String login, @RequestParam("pass") 
 
 @RequestMapping(value="/newTweet"   , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 
-//public String newTweet (@RequestParam("login") String login, @RequestParam("content") String content) throws JsonProcessingException {
-	public String newTweet (@RequestBody User user, Tweet tweet )throws JsonProcessingException {
+public String newTweet (@RequestParam("login") String login, @RequestParam("content") String content) throws JsonProcessingException {
+	//	public String newTweet (@RequestBody User user, Tweet tweet )throws JsonProcessingException {
 	
-	//User user = new User();
-	//user.setLogin(login);
-	//user.setPass("");
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
 	
-	//Tweet tweet = new Tweet();
-	//tweet.setContent(content);
+	Tweet tweet = new Tweet();
+	tweet.setContent(content);
 	
 	return twitterRepositoryImpl.newTweets(user, tweet);
 	
@@ -130,8 +130,6 @@ public List<String> newTweet (@PathVariable String login )throws JsonProcessingE
 	
 				
 }*/
-
-
 
 
 @RequestMapping(value="/numberOfTweet"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
