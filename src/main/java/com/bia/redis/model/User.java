@@ -9,8 +9,23 @@ public class User  {
 	
 	private String login;
 	private String pass;
+	private String pConfirmationPass;
 	
 	
+	
+	
+	
+	
+		public String getpConfirmationPass() {
+		return pConfirmationPass;
+	}
+
+
+	public void setpConfirmationPass(String pConfirmationPass) {
+		this.pConfirmationPass = pConfirmationPass;
+	}
+
+
 		public User() {
 		
 	}

@@ -87,11 +87,21 @@ public class UserRepositoryImpl implements UserRepository {
 		 //Parcours la liste de tout les utilisateurs et 
 		 //je consisdere un utilisateur 
 		  for(String user : elements) {
+			  
+			  System.out.println("Recuperation du user" );
+			  System.out.println(user);
+			  
+			  System.out.println("comparaison du user" );
+			  System.out.println(login);
+			  
+			  
 	            if(login.equals(user)){
 	            	
 	            	System.out.println("L'utilisateur s'appelle  " +  login   );
 	                return login;
 	            }
+	            
+	            System.out.println("Je ne rentre pas dans la condition" );
 	        }
 				
 		return login;
@@ -105,7 +115,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 	
 	@Override
-	public String  signIn(String login, String pwd) {
+	public User  signIn(String login, String pwd) {
 		
 		Jedis jedis = RedisConfig.getJedis();
 
@@ -113,13 +123,20 @@ public class UserRepositoryImpl implements UserRepository {
 		
 		System.out.println(" -----     le password du user est " + password);
 		
+		User u = new User();
 		
 		  if( password.equals(pwd)) {
-	            return jedis.hget(User.USER_KEY + getLogin(login), "uid");
-	            
+			  u.setLogin(login);
+	           u.setPass(pwd);
+	           
+	           System.out.println(" -----     le user est " + u);
+	           
+	           System.out.println(" -----     le password du  " + u.getPass());
+	            jedis.hget(User.USER_KEY + getLogin(login), "uid");
+	           
 	        }
 
-	       return "Connection validé";
+	       return u;
 		
 	}
 

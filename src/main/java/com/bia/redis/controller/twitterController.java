@@ -6,12 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bia.redis.model.Tweet;
@@ -23,9 +24,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/twitter")
+
 public class twitterController {
 	
 	
@@ -39,43 +41,53 @@ private TwitterRepositoryImpl twitterRepositoryImpl;
 
 /* -------------------------------- Connection  ---------------------------------------------------*/
 
+@CrossOrigin
 @RequestMapping(value="/signIn"   , method = RequestMethod.POST)
-public String signIn (@RequestParam("name") String login, @RequestParam("pass") String pass, Model model ) throws JsonProcessingException {
+public User signIn (@RequestBody User u ) throws JsonProcessingException {
 	
-		if (login != null && pass != null) {
-			userRepositoryImpl.signIn(login, pass);	
-			return " Le user " + login + "s'est logué";
+
+		if (u.getLogin() != null && u.getPass() != null) {
+			return userRepositoryImpl.signIn(u.getLogin(), u.getPass());	
+			//return " Le user " + login + "s'est logué";
 		}else {
 			
-			model.addAttribute("Mot de passe ou login non renseigné ", Boolean.TRUE);
-			return " pwd ou login pas renseigné";
+			//model.addAttribute("Mot de passe ou login non renseigné ", Boolean.TRUE);
+			
 		}
+		return u;
 			
 }
 
 
-
-@RequestMapping(value="/signUp"   , method = RequestMethod.POST)
-public String signUp (@RequestParam("name") String login, @RequestParam("pass") String pass, @RequestParam("confirmationMdp") String confirmationMdp, Model model ) throws JsonProcessingException {
-	
+@CrossOrigin
+@RequestMapping(value="/signUp"   , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+/*public String signUp (@RequestParam("name") String login, @RequestParam("pass") String pass, @RequestParam("confirmationMdp") String confirmationMdp, Model model ) throws JsonProcessingException {*/
+	public User signUp (@RequestBody User u)throws JsonProcessingException {	
 	User user = new User();
-	user.setLogin(login);
-	user.setPass(pass);
+	user.setLogin(u.getLogin());
+	user.setPass(u.getPass());
+	
+	System.out.println("---- recupere signuppp ");
+	System.out.println(u.getLogin());
+	System.out.println(u.getPass());
+	System.out.println(u.getpConfirmationPass());
 		
-	if (!pass.equals(confirmationMdp)) {
-		model.addAttribute("Mot de passe ne sont pas identique ", Boolean.TRUE);
-		return "mot de passe pas identique, enregistrement impossible ";
+	if (!u.getPass().equals(u.getpConfirmationPass())) {
+		//model.addAttribute("Mot de passe ne sont pas identique ", Boolean.TRUE);
+		
+		System.out.println("---- existe ");
+		
+		
 	}	
 	
 	
-	if (!userRepositoryImpl.isExist(login)) {
+	if (!userRepositoryImpl.isExist(u.getLogin())) {
 					
 			System.out.println("---- le user exsite pas on peut l'enregistrer");
 			userRepositoryImpl.signUp(user);
 		}
-		
-			
-	return " Save complete !!!";
+		 
+	return user;
 			
 		
 }
@@ -90,32 +102,41 @@ public String signUp (@RequestParam("name") String login, @RequestParam("pass") 
 
 @RequestMapping(value="/newTweet"   , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 
-public String newTweet (@RequestParam("login") String login, @RequestParam("content") String content) throws JsonProcessingException {
-	//	public String newTweet (@RequestBody User user, Tweet tweet )throws JsonProcessingException {
+//public String newTweet (@RequestParam("login") String login, @RequestParam("content") String content) throws JsonProcessingException {
+	public Tweet newTweet ( @RequestBody Tweet tweet )throws JsonProcessingException {
 	
 	User user = new User();
-	user.setLogin(login);
+	user.setLogin(tweet.getLogin());
 	user.setPass("");
 	
-	Tweet tweet = new Tweet();
-	tweet.setContent(content);
+	Tweet t = new Tweet();
+	t.setContent(tweet.getContent());
 	
-	return twitterRepositoryImpl.newTweets(user, tweet);
+	twitterRepositoryImpl.newTweets(user, tweet);
+	return tweet;
 	
 				
 }
 
 
 @RequestMapping(value="/showTweets"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
-public List<String> newTweet (@RequestParam("login") String login )throws JsonProcessingException {
-	
-	
+public List<String> showTweets (@RequestParam("login") String login )throws JsonProcessingException {
+		
 	User user = new User();
 	user.setLogin(login);
 	user.setPass("");
 	return twitterRepositoryImpl.ShowAllTweetOfUser(user);
-	
-				
+					
+}
+
+@RequestMapping(value="/showLastTweets"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public List<String> showLastTweets (@RequestParam("login") String login )throws JsonProcessingException {
+		
+	User user = new User();
+	user.setLogin(login);
+	user.setPass("");
+	return twitterRepositoryImpl.ShowLastTweetOfUser(user);
+					
 }
 
 
@@ -154,6 +175,7 @@ public  List<String>  showAllTweetofFollowing (@RequestParam("user") String u )t
 	return twitterRepositoryImpl.showTweetOfPeopleIFollow(user);
 					
 }
+
 
 
 
@@ -230,10 +252,11 @@ public  Long  numberOfPeopleIFollow (@RequestParam("login") String login )throws
 
 @RequestMapping(value="/search"   , method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
 
-public  List<String>  search (@RequestParam("hashtag") String hashtag )throws JsonProcessingException {
+//public  List<String>  search (@RequestParam("hashtag") String hashtag )throws JsonProcessingException {
+	public  List<String>  search ( @RequestBody Tweet t)throws JsonProcessingException {
 	
 	Tweet query = new Tweet();
-	query.setContent(hashtag);;
+	query.setContent(t.getContent());
 	query.getTime();
 	
 	return twitterRepositoryImpl.search(query);

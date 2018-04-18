@@ -13,7 +13,10 @@ public interface TwitterRepository {
 	 /* ------------------ Tweet  ---------------*/
 	
 	 String newTweets(User user, Tweet tweet);
+	
 	 List<String>ShowAllTweetOfUser(User user);
+	 
+	 public List<String> ShowLastTweetOfUser(User user);
 	 
 	 	 
 	 /* ------------------ Follow  ---------------*/

@@ -9,7 +9,7 @@ public interface UserRepository {
 	
 	void signUp (User user );
 		
-	String signIn(String login, String pwd );
+	User signIn(String login, String pwd );
 	
 	boolean isExist(String login);
 	

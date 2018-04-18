@@ -208,6 +208,20 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 		
 	}
 
+	@Override
+	public List<String> ShowLastTweetOfUser(User user) {
+		
+
+		Jedis jedis = RedisConfig.getJedis();
+		
+		String key = "ShowTweetOf:"+user.getLogin();
+		
+		return jedis.lrange(key, 0, 2);
+	}
+	
+
+
+
 
 
 	
