@@ -208,6 +208,7 @@ public void addFollower (@RequestParam("login") String login, @RequestParam("fol
 	u.setLogin(user.getLogin());
 	u.setPass("");
 	u.setPeopleFollowByUser(user.getPeopleFollowByUser());
+	u.setFollowers(user.getFollowers());
 	
 	//twitterRepositoryImpl.addFollowing(user, follow );
 	

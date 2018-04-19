@@ -108,6 +108,10 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 		Jedis jedis = RedisConfig.getJedis();	
 		String key = user.getLogin()+"Follow";	
 		jedis.lpush(key, user.getPeopleFollowByUser());
+		
+		//
+		String key2 = "FollowersOf:"+ user.getFollowers();
+		jedis.lpush(key2, user.getLogin());	
 				
 	}
 	
