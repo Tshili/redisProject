@@ -55,7 +55,7 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 			tweetOfPeolpleIfollw = RedisConfig.getJedis().lrange("ShowTweetOf:"+people, 0, -1);
 			
 			for (String tweet : tweetOfPeolpleIfollw) {
-				getTWeetOfPeopleIfoolow.add( people + " a tweeté : " +  tweet);
+				getTWeetOfPeopleIfoolow.add( people + " a tweeté : " +  tweet );
 				
 			}					
 		}
@@ -93,12 +93,21 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 	/* ----------------------------- Follow  -----------------------------------*/
 
 
-	@Override
+/*	@Override
 	public void addFollowing(User user, String follow) {
 		
 		Jedis jedis = RedisConfig.getJedis();	
 		String key = user.getLogin()+"Follow";	
 		jedis.lpush(key, follow);
+				
+	}*/
+	
+	@Override
+	public void addFollowing(User user) {
+		
+		Jedis jedis = RedisConfig.getJedis();	
+		String key = user.getLogin()+"Follow";	
+		jedis.lpush(key, user.getPeopleFollowByUser());
 				
 	}
 	
@@ -169,6 +178,10 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 				
 		return	jedis.llen(key);
 	}
+	
+	
+	
+
 
 
 	
@@ -218,6 +231,20 @@ public class TwitterRepositoryImpl implements TwitterRepository {
 		
 		return jedis.lrange(key, 0, 2);
 	}
+
+	@Override
+	public List<String> suggestions() {
+		
+List<String> suggestions = new ArrayList<>();
+		
+		Jedis jedis = RedisConfig.getJedis();
+		String key = "USER:";
+				
+		suggestions = jedis.lrange(key, 0, 4);
+		
+		return suggestions;
+	}
+	
 	
 
 

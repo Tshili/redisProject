@@ -21,7 +21,8 @@ public interface TwitterRepository {
 	 	 
 	 /* ------------------ Follow  ---------------*/
 	 
-	 void addFollowing(User user, String idFollower );
+	 //void addFollowing(User user, String idFollower );
+	 void addFollowing(User user);
 	 void addFollower(User user, String idFollowing );
 	 List <String> showAllPeopleFollowBy(User user);
 	 List <String> showAllMyFollwer(User user);
@@ -29,6 +30,7 @@ public interface TwitterRepository {
 	 long numberOfPeopleIFollow(User user);
 	 long numberOfTweet(User user);
 	 List<String> showTweetOfPeopleIFollow(User user);
+	 List <String> suggestions();
 	 
 	 
 	 /* ------------------ Search  ---------------*/

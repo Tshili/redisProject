@@ -45,6 +45,8 @@ private TwitterRepositoryImpl twitterRepositoryImpl;
 @RequestMapping(value="/signIn"   , method = RequestMethod.POST)
 public User signIn (@RequestBody User u ) throws JsonProcessingException {
 	
+	
+	
 
 		if (u.getLogin() != null && u.getPass() != null) {
 			return userRepositoryImpl.signIn(u.getLogin(), u.getPass());	
@@ -195,13 +197,23 @@ public void addFollower (@RequestParam("login") String login, @RequestParam("fol
 
 
 @RequestMapping(value="/addFollowing"   , method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
-public void addFollowing (@RequestParam("login") String login, @RequestParam("idFollower") String follow )throws JsonProcessingException {
+//public void addFollowing (@RequestParam("login") String login, @RequestParam("idFollower") String follow )throws JsonProcessingException {
+	public void addFollowing (@RequestBody User user )throws JsonProcessingException {
 	
-	User user = new User();
-	user.setLogin(login);
-	user.setPass("");
+	//User user = new User();
+	//user.setLogin(login);
+	//user.setPass("");
 	
-	twitterRepositoryImpl.addFollowing(user, follow );
+	User u = new User();
+	u.setLogin(user.getLogin());
+	u.setPass("");
+	u.setPeopleFollowByUser(user.getPeopleFollowByUser());
+	
+	//twitterRepositoryImpl.addFollowing(user, follow );
+	
+	twitterRepositoryImpl.addFollowing(u);
+	
+	
 					
 }
 
@@ -260,6 +272,17 @@ public  Long  numberOfPeopleIFollow (@RequestParam("login") String login )throws
 	query.getTime();
 	
 	return twitterRepositoryImpl.search(query);
+					
+}
+
+
+
+
+@RequestMapping(value="/suggestions"   , method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+public  List<String>  suggestions ()throws JsonProcessingException {
+	
+
+	return twitterRepositoryImpl.suggestions();
 					
 }
 

@@ -28,6 +28,7 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public void signUp(User user) {
 		
+		
 		String idUser = UUID.randomUUID().toString();
 		
 		
@@ -43,6 +44,10 @@ public class UserRepositoryImpl implements UserRepository {
 		 
 		 // Enregistrement de tout les users 
 		 jedis.rpush(User.USER_KEY, user.getLogin());
+		 
+		 
+		 
+		 
 		 		
 	}
 	

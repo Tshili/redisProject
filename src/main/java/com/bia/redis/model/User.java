@@ -7,15 +7,48 @@ public class User  {
 
 	public final static String USER_KEY = "USER:";
 	
+	
+	private String userID;
+	public String getUserID() {
+		return userID;
+	}
+
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
 	private String login;
 	private String pass;
 	private String pConfirmationPass;
+	private String peopleFollowByUser;
+	private String followers;
 	
 	
 	
 	
 	
 	
+	
+		public String getFollowers() {
+		return followers;
+	}
+
+
+	public void setFollowers(String followers) {
+		this.followers = followers;
+	}
+
+
+		public String getPeopleFollowByUser() {
+		return peopleFollowByUser;
+	}
+
+
+	public void setPeopleFollowByUser(String peopleFollowByUser) {
+		this.peopleFollowByUser = peopleFollowByUser;
+	}
+
+
 		public String getpConfirmationPass() {
 		return pConfirmationPass;
 	}
