@@ -15,4 +15,4 @@ L'objectif était de réaliser un twitter-like en gérant :
 	- Lister les personne que follow une personne
 	- Lister les derniers tweets des personnes que je follow
 
-Avec ceci nous avons aussi gérer la connexion (mais pas la déconnexion)	
+Avec ceci nous avons aussi géré la connexion (mais pas la déconnexion)	
